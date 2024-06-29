@@ -16,14 +16,6 @@ function createShortLink($url, $customShortCode = null) {
     return $shortCode;
 }
 
-// fungsi untuk menghapus shortlink
-function deleteShortLink($shortCode) {
-    global $conn;
-    $stmt = $conn->prepare("DELETE FROM shortlinks WHERE short_code = ?");
-    $stmt->bind_param("s", $shortCode);
-    $stmt->execute();
-}
-
 // fungsi untuk mengarahkan shortlink ke URL asli
 function redirect($shortCode) {
     global $conn;
@@ -40,13 +32,14 @@ function redirect($shortCode) {
     }
 }
 
-// Cek jika ada parameter 'code' di URL
-if (isset($_GET['code'])) {
-    $shortCode = $_GET['code'];
-    redirect($shortCode);
+// fungsi untuk menghapus shortlink
+function deleteShortLink($shortCode) {
+    global $conn;
+    $stmt = $conn->prepare("DELETE FROM shortlinks WHERE short_code = ?");
+    $stmt->bind_param("s", $shortCode);
+    $stmt->execute();
 }
 
-// Proses form untuk membuat shortlink
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['url'])) {
         $url = $_POST['url'];
@@ -85,6 +78,7 @@ $shortLinks = getAllShortLinks();
             flex-direction: column;
             min-height: 100vh;
             margin: 0;
+            padding: 20px;
         }
         .container {
             background-color: white;
@@ -94,10 +88,10 @@ $shortLinks = getAllShortLinks();
             text-align: center;
             width: 100%;
             max-width: 600px;
-            margin: 20px auto;
         }
         input[type="text"] {
             width: 100%;
+            max-width: 400px;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ddd;
@@ -127,28 +121,27 @@ $shortLinks = getAllShortLinks();
         .shortlink-list {
             margin-top: 20px;
             text-align: left;
-            overflow-x: auto;
         }
         .shortlink-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             padding: 10px;
             border-bottom: 1px solid #ddd;
-            flex-wrap: wrap;
         }
         .shortlink-item:last-child {
             border-bottom: none;
         }
         .shortlink-item span {
-            max-width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .shortlink-item a,
-        .shortlink-item .original-url {
+        .shortlink-item a {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            max-width: calc(100% - 100px);
+            max-width: 300px;
+            display: block;
         }
         .shortlink-item form {
             margin: 0;
@@ -158,12 +151,6 @@ $shortLinks = getAllShortLinks();
         }
         .error {
             color: red;
-        }
-        @media (max-width: 600px) {
-            .shortlink-item a,
-            .shortlink-item .original-url {
-                max-width: calc(100% - 70px);
-            }
         }
     </style>
 </head>
@@ -188,12 +175,12 @@ $shortLinks = getAllShortLinks();
                 echo "<div class='shortlink-item'>
                         <span>
                             <a href='https://akumars.dev/shortlink/" . $link['short_code'] . "' target='_blank'>" . $link['short_code'] . "</a>
-                            <span class='original-url'>" . $link['original_url'] . "</span>
+                            <span>" . $link['original_url'] . "</span>
+                            <form method='POST' action=''>
+                                <input type='hidden' name='delete_code' value='" . $link['short_code'] . "'>
+                                <button type='submit'>Hapus</button>
+                            </form>
                         </span>
-                        <form method='POST' action=''>
-                            <input type='hidden' name='delete_code' value='" . $link['short_code'] . "'>
-                            <button type='submit'>Hapus</button>
-                        </form>
                       </div>";
             }
             ?>

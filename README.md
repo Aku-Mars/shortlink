@@ -60,14 +60,9 @@ cat > /var/www/html/shortlink/.htaccess
 ```
 ```
 RewriteEngine On
-
-# Arahkan permintaan shortlink ke redirect.php dengan parameter code
-RewriteRule ^shortlink/([a-zA-Z0-9]+)$ redirect.php?code=$1 [L,QSA]
-
-# Arahkan permintaan lain ke index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [L,QSA]
+RewriteRule ^(.*)$ index.php?c=$1 [L,QSA]
 
 ```
 ```
@@ -76,12 +71,9 @@ sudo systemctl restart apache2
 
 > Access
 ```
-sudo chown www-data:www-data /var/www/html/shortlink/.htaccess
-sudo chown www-data:www-data /var/www/html/shortlink/redirect.php
-sudo chown www-data:www-data /var/www/html/shortlink/index.php
-sudo chmod 644 /var/www/html/shortlink/.htaccess
-sudo chmod 644 /var/www/html/shortlink/redirect.php
-sudo chmod 644 /var/www/html/shortlink/index.php
+sudo chown -R www-data:www-data /var/www/html/shortlink
+sudo chmod -R 755 /var/www/html/shortlink
+
 ```
 
 
