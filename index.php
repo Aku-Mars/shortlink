@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $url = $_POST['url'];
         $customShortCode = isset($_POST['custom_code']) ? $_POST['custom_code'] : null;
         $shortCode = createShortLink($url, $customShortCode);
-        $shortLink = "https://akumars.dev/s/" . $shortCode;
+        $shortLink = "https://akumars.dev/shortlink/" . $shortCode;
     } elseif (isset($_POST['delete_code'])) {
         $shortCode = $_POST['delete_code'];
         deleteShortLink($shortCode);
@@ -164,7 +164,7 @@ $shortLinks = getAllShortLinks();
             foreach ($shortLinks as $link) {
                 echo "<div class='shortlink-item'>
                         <span>
-                            <a href='https://akumars.dev/s/" . $link['short_code'] . "' target='_blank'>" . $link['short_code'] . "</a>
+                            <a href='https://akumars.dev/shortlink/" . $link['short_code'] . "' target='_blank'>" . $link['short_code'] . "</a>
                             <span class='original-url'>" . $link['original_url'] . "</span>
                         </span>
                         <form method='POST' action=''>

@@ -60,8 +60,7 @@ cat > /var/www/html/shortlink/.htaccess
 ```
 ```
 RewriteEngine On
-RewriteBase /shortlink/
-RewriteRule ^s/([a-zA-Z0-9]+)$ redirect.php?code=$1 [L]
+RewriteRule ^shortlink/([a-zA-Z0-9]+)$ redirect.php?code=$1 [L]
 ```
 ```
 sudo systemctl restart apache2
