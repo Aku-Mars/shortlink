@@ -20,6 +20,12 @@ CREATE TABLE shortlinks (
 ```
 
 ## Configuration
+> Permission
+```
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+```
+
 > Def Conf
 ```
 cat > /etc/apache2/sites-available/000-default.conf
@@ -54,6 +60,7 @@ cat > /var/www/html/shortlink/.htaccess
 ```
 ```
 RewriteEngine On
+RewriteBase /shortlink/
 RewriteRule ^s/([a-zA-Z0-9]+)$ redirect.php?code=$1 [L]
 ```
 ```
@@ -62,8 +69,12 @@ sudo systemctl restart apache2
 
 > Access
 ```
-sudo chown -R www-data:www-data /var/www/html/shortlink
-sudo chmod -R 755 /var/www/html/shortlink
+sudo chown www-data:www-data /var/www/html/shortlink/.htaccess
+sudo chown www-data:www-data /var/www/html/shortlink/redirect.php
+sudo chown www-data:www-data /var/www/html/shortlink/index.php
+sudo chmod 644 /var/www/html/shortlink/.htaccess
+sudo chmod 644 /var/www/html/shortlink/redirect.php
+sudo chmod 644 /var/www/html/shortlink/index.php
 ```
 
 
