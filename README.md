@@ -59,8 +59,19 @@ cat > /etc/apache2/sites-available/000-default.conf
 cat > /var/www/html/shortlink/.htaccess
 ```
 ```
+# Aktifkan mod_rewrite
 RewriteEngine On
-RewriteRule ^shortlink/([a-zA-Z0-9]+)$ redirect.php?code=$1 [L]
+
+# Atur aturan untuk shortlink
+# Arahkan permintaan ke redirect.php dengan kode shortlink sebagai parameter
+RewriteRule ^shortlink/([a-zA-Z0-9]+)$ redirect.php?code=$1 [L,QSA]
+
+# Atur aturan untuk semua permintaan lain menuju index.php
+# Permintaan tanpa parameter 'code' menuju index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L]
+
 ```
 ```
 sudo systemctl restart apache2

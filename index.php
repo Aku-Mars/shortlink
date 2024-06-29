@@ -24,6 +24,29 @@ function deleteShortLink($shortCode) {
     $stmt->execute();
 }
 
+// fungsi untuk mengarahkan shortlink ke URL asli
+function redirect($shortCode) {
+    global $conn;
+    $stmt = $conn->prepare("SELECT original_url FROM shortlinks WHERE short_code = ?");
+    $stmt->bind_param("s", $shortCode);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        header("Location: " . $row['original_url']);
+        exit();
+    } else {
+        echo "Shortlink tidak ditemukan!";
+    }
+}
+
+// Cek jika ada parameter 'code' di URL
+if (isset($_GET['code'])) {
+    $shortCode = $_GET['code'];
+    redirect($shortCode);
+}
+
+// Proses form untuk membuat shortlink
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['url'])) {
         $url = $_POST['url'];
