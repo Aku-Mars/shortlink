@@ -101,7 +101,12 @@ $shortLinks = getAllShortLinks();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat Shortlink</title>
+    <meta property="og:title" content="Short Your Link Here">
+    <meta property="og:description" content="Mars Hub">
+    <meta property="og:image" content="https://raw.githubusercontent.com/Aku-Mars/gambar/main/bannercps.png">
+    <meta property="og:url" content="https://akumars.dev/">    
+    <title>Mars Shortlink</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/Aku-Mars/gambar/main/neko.png" type="image/x-icon">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -208,7 +213,8 @@ $shortLinks = getAllShortLinks();
         <?php if (isset($message)) { ?>
             <p class="message"><?php echo $message; ?></p>
         <?php } ?>
-        <div class="shortlink-list">
+
+        <!-- <div class="shortlink-list">
             <h2>Daftar Shortlink</h2>
             <?php
             foreach ($shortLinks as $link) {
@@ -224,7 +230,8 @@ $shortLinks = getAllShortLinks();
                       </div>";
             }
             ?>
-        </div>
+        </div> -->
+
     </div>
 </body>
 </html>
