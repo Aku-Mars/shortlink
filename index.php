@@ -7,9 +7,15 @@ if ($conn->connect_error) {
 }
 
 // fungsi untuk membuat shortlink
-function createShortLink($url, $customShortCode = null) {
+function createShortLink($url, $customShortCode = null, $length = 6) {
     global $conn;
-    $shortCode = $customShortCode ? $customShortCode : substr(md5(uniqid(rand(), true)), 0, 6); // membuat kode pendek
+    
+    if ($customShortCode) {
+        $shortCode = $customShortCode;
+    } else {
+        $shortCode = substr(md5(uniqid(rand(), true)), 0, $length); // membuat kode pendek dengan panjang yang ditentukan
+    }
+    
     // Cek jika shortCode sudah ada
     $stmt = $conn->prepare("SELECT COUNT(*) FROM shortlinks WHERE short_code = ?");
     $stmt->bind_param("s", $shortCode);
@@ -17,10 +23,17 @@ function createShortLink($url, $customShortCode = null) {
     $stmt->store_result();
     $stmt->bind_result($count);
     $stmt->fetch();
-    if ($count > 0) {
-        // Jika sudah ada, buat shortCode baru
-        $shortCode = substr(md5(uniqid(rand(), true)), 0, 6);
+    
+    while ($count > 0) {
+        // Jika sudah ada, buat shortCode baru dengan panjang yang ditentukan
+        $shortCode = substr(md5(uniqid(rand(), true)), 0, $length);
+        $stmt->bind_param("s", $shortCode);
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($count);
+        $stmt->fetch();
     }
+    
     $stmt->close();
     $stmt = $conn->prepare("INSERT INTO shortlinks (short_code, original_url) VALUES (?, ?)");
     $stmt->bind_param("ss", $shortCode, $url);
@@ -64,7 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['url'])) {
         $url = $_POST['url'];
         $customShortCode = isset($_POST['custom_code']) ? $_POST['custom_code'] : null;
-        $shortCode = createShortLink($url, $customShortCode);
+        $length = isset($_POST['length']) ? (int)$_POST['length'] : 6; // Ambil panjang dari input, default 6
+        $shortCode = createShortLink($url, $customShortCode, $length);
         $shortLink = "https://akumars.dev/shortlink/" . $shortCode;
     } elseif (isset($_POST['delete_code'])) {
         $shortCode = $_POST['delete_code'];
@@ -108,7 +122,7 @@ $shortLinks = getAllShortLinks();
             max-width: 600px;
             margin: 20px auto;
         }
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -185,6 +199,7 @@ $shortLinks = getAllShortLinks();
         <form method="POST" action="">
             <input type="text" name="url" placeholder="Masukkan URL" required>
             <input type="text" name="custom_code" placeholder="Custom shortlink (optional)">
+            <input type="number" name="length" placeholder="Panjang shortlink (default: 6)" min="1" max="10" value="6">
             <button type="submit">Buat Shortlink</button>
         </form>
         <?php if (isset($shortLink)) { ?>

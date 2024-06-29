@@ -62,8 +62,8 @@ cat > /var/www/html/shortlink/.htaccess
 RewriteEngine On
 RewriteBase /shortlink/
 
-# Pastikan semua permintaan dengan format shortlink diarahkan ke index.php
-RewriteRule ^([a-zA-Z0-9]{6})$ index.php?shortCode=$1 [L,QSA]
+# Tangani shortlink dengan panjang variabel
+RewriteRule ^([a-zA-Z0-9]+)$ index.php?shortCode=$1 [L,QSA]
 
 ```
 ```
