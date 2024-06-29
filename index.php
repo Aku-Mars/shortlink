@@ -75,10 +75,8 @@ $shortLinks = getAllShortLinks();
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
         }
         .container {
             background-color: white;
@@ -88,10 +86,10 @@ $shortLinks = getAllShortLinks();
             text-align: center;
             width: 100%;
             max-width: 600px;
+            margin: 20px auto;
         }
         input[type="text"] {
             width: 100%;
-            max-width: 400px;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ddd;
@@ -121,27 +119,28 @@ $shortLinks = getAllShortLinks();
         .shortlink-list {
             margin-top: 20px;
             text-align: left;
+            overflow-x: auto;
         }
         .shortlink-item {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
             padding: 10px;
             border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
         }
         .shortlink-item:last-child {
             border-bottom: none;
         }
         .shortlink-item span {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            max-width: 100%;
         }
-        .shortlink-item a {
+        .shortlink-item a,
+        .shortlink-item .original-url {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            max-width: 300px;
-            display: block;
+            max-width: calc(100% - 100px);
         }
         .shortlink-item form {
             margin: 0;
@@ -151,6 +150,12 @@ $shortLinks = getAllShortLinks();
         }
         .error {
             color: red;
+        }
+        @media (max-width: 600px) {
+            .shortlink-item a,
+            .shortlink-item .original-url {
+                max-width: calc(100% - 70px);
+            }
         }
     </style>
 </head>
@@ -175,12 +180,12 @@ $shortLinks = getAllShortLinks();
                 echo "<div class='shortlink-item'>
                         <span>
                             <a href='https://akumars.dev/shortlink/" . $link['short_code'] . "' target='_blank'>" . $link['short_code'] . "</a>
-                            <span>" . $link['original_url'] . "</span>
-                            <form method='POST' action=''>
-                                <input type='hidden' name='delete_code' value='" . $link['short_code'] . "'>
-                                <button type='submit'>Hapus</button>
-                            </form>
+                            <span class='original-url'>" . $link['original_url'] . "</span>
                         </span>
+                        <form method='POST' action=''>
+                            <input type='hidden' name='delete_code' value='" . $link['short_code'] . "'>
+                            <button type='submit'>Hapus</button>
+                        </form>
                       </div>";
             }
             ?>
