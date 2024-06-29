@@ -54,9 +54,7 @@ cat > /var/www/html/shortlink/.htaccess
 ```
 ```
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?c=$1 [L,QSA]
+RewriteRule ^s/([a-zA-Z0-9]+)$ redirect.php?code=$1 [L]
 ```
 ```
 sudo systemctl restart apache2
@@ -67,12 +65,5 @@ sudo systemctl restart apache2
 sudo chown -R www-data:www-data /var/www/html/shortlink
 sudo chmod -R 755 /var/www/html/shortlink
 ```
-
->Struktur
-/var/www/html/
-├── index.html
-└── shortlink
-    ├── .htaccess
-    └── index.php
 
 
