@@ -60,9 +60,10 @@ cat > /var/www/html/shortlink/.htaccess
 ```
 ```
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?c=$1 [L,QSA]
+RewriteBase /shortlink/
+
+# Pastikan semua permintaan dengan format shortlink diarahkan ke index.php
+RewriteRule ^([a-zA-Z0-9]{6})$ index.php?shortCode=$1 [L,QSA]
 
 ```
 ```

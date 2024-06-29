@@ -10,6 +10,18 @@ if ($conn->connect_error) {
 function createShortLink($url, $customShortCode = null) {
     global $conn;
     $shortCode = $customShortCode ? $customShortCode : substr(md5(uniqid(rand(), true)), 0, 6); // membuat kode pendek
+    // Cek jika shortCode sudah ada
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM shortlinks WHERE short_code = ?");
+    $stmt->bind_param("s", $shortCode);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    if ($count > 0) {
+        // Jika sudah ada, buat shortCode baru
+        $shortCode = substr(md5(uniqid(rand(), true)), 0, 6);
+    }
+    $stmt->close();
     $stmt = $conn->prepare("INSERT INTO shortlinks (short_code, original_url) VALUES (?, ?)");
     $stmt->bind_param("ss", $shortCode, $url);
     $stmt->execute();
@@ -25,7 +37,9 @@ function redirect($shortCode) {
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        header("Location: " . $row['original_url']);
+        $url = $row['original_url'];
+        $stmt->close();
+        header("Location: " . $url);
         exit();
     } else {
         echo "Shortlink tidak ditemukan!";
@@ -38,6 +52,12 @@ function deleteShortLink($shortCode) {
     $stmt = $conn->prepare("DELETE FROM shortlinks WHERE short_code = ?");
     $stmt->bind_param("s", $shortCode);
     $stmt->execute();
+}
+
+// Cek jika shortCode ada di URL
+if (isset($_GET['shortCode'])) {
+    $shortCode = $_GET['shortCode'];
+    redirect($shortCode);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
