@@ -22,6 +22,7 @@ function redirect($shortCode) {
     }
 }
 
+// Cek jika ada parameter 'code' di URL
 if (isset($_GET['code'])) {
     $shortCode = $_GET['code'];
     redirect($shortCode);
